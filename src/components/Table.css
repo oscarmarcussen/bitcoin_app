@@ -1,0 +1,15 @@
+table {
+  border-collapse: collapse;
+}
+
+#headRow {
+  background-color: midnightblue;
+}
+
+th {
+  color: white;
+}
+
+td {
+  padding: 0.3rem 0.3rem !important;
+}
