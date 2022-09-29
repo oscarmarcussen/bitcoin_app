@@ -1,38 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
-import axios from "axios";
 import { Table } from "./components/Table";
-import { timeConverter } from "./utils/timeConverter";
 import { PageSelector } from "./components/PageSelector";
+import useFetchData from "./hooks/useFetchData";
 
 function App() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(20);
 
-  useEffect(() => {
-    const fetchInfo = async () => {
-      setLoading(true);
-      axios
-        .get(
-          "https://min-api.cryptocompare.com/data/v2/histoday?fsym=BTC&tsym=USD&limit=100&api_key=8ae55d463e1bf8d38b4a502ca47512f9b1dec21533ad9af7acb993e8ba952bc2"
-        )
-        .then((response) => {
-          const rawData = response.data["Data"]["Data"];
-          const newData = rawData.map((item) => {
-            const oldTime = item["time"];
-            const newTime = timeConverter(oldTime);
-            return { ...item, time: newTime };
-          });
-          setData(newData);
-        })
-        .catch((error) => console.log(error))
-        .finally(setLoading(false));
-    };
-
-    fetchInfo();
-  }, []);
+  const { data, loading, error } = useFetchData();
 
   const column = [
     { heading: "Date", value: "time" },
@@ -44,11 +20,15 @@ function App() {
     { heading: "Close ($)", value: "close" },
   ];
 
+  /*currencyConverter = (sum) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sum)*/
+
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = data.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const changePage = (pageNumber) => setCurrentPage(pageNumber);
+
+  if (error) return <h1>Something went wrong...</h1>;
 
   return (
     <div className="App container">
@@ -57,7 +37,7 @@ function App() {
       <PageSelector
         entriesPerPage={entriesPerPage}
         totalEntries={data.length}
-        changePage={changePage}
+        changePage={setCurrentPage}
         currentPage={currentPage}
       />
     </div>

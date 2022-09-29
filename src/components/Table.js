@@ -5,7 +5,7 @@ export const Table = ({ data, column, loading }) => {
   if (loading) return <h1>Loading...</h1>;
 
   return (
-    <table class="table table-striped">
+    <table className="table table-striped">
       <thead>
         <tr id="headRow">
           {column.map((item, index) => (
@@ -32,7 +32,7 @@ const RowElement = ({ item, rowIndex, column }) => (
     {column.map((columnItem, index) => {
       return (
         <td key={`${columnItem.value} ${rowIndex}`}>
-          {item[`${columnItem.value}`]}
+          {item[columnItem.value]}
         </td>
       );
     })}
